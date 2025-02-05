@@ -1,7 +1,6 @@
 package org.example;
 
-import DAOS.DAOEpisodio;
-import DAOS.DAOGenero;
+import DAOS.*;
 
 import java.util.Scanner;
 
@@ -11,6 +10,10 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         DAOEpisodio daoEpisodio = new DAOEpisodio();
         DAOGenero daoGenero = new DAOGenero();
+        DAOPerfil daoPerfil = new DAOPerfil();
+        DAOSerie daoSerie = new DAOSerie();
+        DAOUsuario daoUsuario = new DAOUsuario();
+        DAOHistorial daoHistorial = new DAOHistorial();
         int opcion;
 
         do {
@@ -28,10 +31,10 @@ public class Main {
             switch (opcion) {
                 case 1 -> manejarSubMenu(scanner, daoEpisodio, "Episodio");
                 case 2 -> manejarSubMenu(scanner, daoGenero, "Género");
-                case 3 -> manejarSubMenu(scanner, null, "Historial");
-                case 4 -> manejarSubMenu(scanner, null, "Perfil");
-                case 5 -> manejarSubMenu(scanner, null, "Serie");
-                case 6 -> manejarSubMenu(scanner, null, "Usuario");
+                case 3 -> manejarSubMenu(scanner, daoHistorial, "Historial");
+                case 4 -> manejarSubMenu(scanner, daoPerfil, "Perfil");
+                case 5 -> manejarSubMenu(scanner, daoSerie, "Serie");
+                case 6 -> manejarSubMenu(scanner, daoUsuario, "Usuario");
                 case 0 -> System.out.println("Saliendo del programa...");
                 default -> System.out.println("Opción no válida. Inténtalo de nuevo.");
             }
@@ -78,11 +81,18 @@ public class Main {
         int opcionId = introduceEntero(scanner);
         System.out.println("Mostrando " + entidad + "...");
         if (dao instanceof DAOEpisodio) {
-            ((DAOEpisodio) dao).listarEpisodios(opcionId);}
-//        else if (dao instanceof DAOGenero) {
-//            ((DAOGenero) dao).listarGeneros(opcionId);
-//        }
+            ((DAOEpisodio) dao).listarEpisodios(opcionId);
+        } else if (dao instanceof DAOPerfil) {
+            ((DAOPerfil) dao).listarPerfiles(opcionId);
+        } else if (dao instanceof DAOHistorial) {
+            ((DAOHistorial) dao).listarHistorial(opcionId);
+        }else if (dao instanceof DAOSerie) {
+            ((DAOSerie) dao).listarSeries(opcionId);
+        }else if (dao instanceof DAOUsuario) {
+        ((DAOUsuario) dao).listarUsuarios(opcionId);
     }
+        }
+
 
     private static void manejarActualizar(Scanner scanner, Object dao, String entidad) {
         System.out.println("Dime el id del " + entidad.toLowerCase() + " que quieras modificar");
@@ -90,6 +100,14 @@ public class Main {
         System.out.println("Actualizando " + entidad + "...");
         if (dao instanceof DAOEpisodio) {
             ((DAOEpisodio) dao).actualizarEpisodio(opcionId);
+        }else if (dao instanceof DAOPerfil) {
+            ((DAOPerfil) dao).actualizarPerfil(opcionId);
+        }else if (dao instanceof DAOHistorial) {
+            ((DAOHistorial) dao).actualizarHistorial(opcionId);
+        }else if (dao instanceof DAOSerie) {
+            ((DAOSerie) dao).actualizarSerie(opcionId);
+        }else if (dao instanceof DAOUsuario) {
+            ((DAOUsuario) dao).actualizarUsuario(opcionId);
         }
 //        else if (dao instanceof DAOGenero) {
 //            ((DAOGenero) dao).actualizarGenero(opcionId);
@@ -97,9 +115,17 @@ public class Main {
     }
 
     private static void manejarInsertar(Scanner scanner, Object dao, String entidad) {
-        System.out.println("➕ Insertando " + entidad + "...");
+        System.out.println(" Insertando " + entidad + "...");
         if (dao instanceof DAOEpisodio) {
             ((DAOEpisodio) dao).crearEpisodio();
+        }else if (dao instanceof DAOPerfil) {
+            ((DAOPerfil) dao).crearPerfil();
+        }else if (dao instanceof DAOHistorial) {
+            ((DAOHistorial) dao).crearHistorial();
+        }else if (dao instanceof DAOSerie) {
+            ((DAOSerie) dao).crearSerie();
+        }else if (dao instanceof DAOUsuario) {
+            ((DAOUsuario) dao).crearUsuario();
         }
 //        else if (dao instanceof DAOGenero) {
 //            ((DAOGenero) dao).crearGenero();
@@ -112,6 +138,14 @@ public class Main {
         System.out.println("Eliminando " + entidad + "...");
         if (dao instanceof DAOEpisodio) {
             ((DAOEpisodio) dao).eliminarEpisodio(opcionId);
+        }else if (dao instanceof DAOPerfil) {
+            ((DAOPerfil) dao).eliminarPerfil(opcionId);
+        }else if (dao instanceof DAOHistorial) {
+            ((DAOHistorial) dao).eliminarHistorial(opcionId);
+        }else if (dao instanceof DAOSerie) {
+            ((DAOSerie) dao).eliminarSerie(opcionId);
+        }else if (dao instanceof DAOUsuario) {
+            ((DAOUsuario) dao).eliminarUsuario(opcionId);
         }
 //        else if (dao instanceof DAOGenero) {
 //            ((DAOGenero) dao).eliminarGenero(opcionId);
