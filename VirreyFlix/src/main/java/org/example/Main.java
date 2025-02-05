@@ -14,6 +14,7 @@ public class Main {
         DAOSerie daoSerie = new DAOSerie();
         DAOUsuario daoUsuario = new DAOUsuario();
         DAOHistorial daoHistorial = new DAOHistorial();
+        Consultas consultas = new Consultas();
         int opcion;
 
         do {
@@ -24,6 +25,7 @@ public class Main {
             System.out.println("4. Perfil");
             System.out.println("5. Serie");
             System.out.println("6. Usuario");
+            System.out.println("7. Consultas");
             System.out.println("0. Salir");
             System.out.print("Elige una opción: ");
             opcion = introduceEntero(scanner);
@@ -35,6 +37,7 @@ public class Main {
                 case 4 -> manejarSubMenu(scanner, daoPerfil, "Perfil");
                 case 5 -> manejarSubMenu(scanner, daoSerie, "Serie");
                 case 6 -> manejarSubMenu(scanner, daoUsuario, "Usuario");
+                case 7 -> consultas.consulta();
                 case 0 -> System.out.println("Saliendo del programa...");
                 default -> System.out.println("Opción no válida. Inténtalo de nuevo.");
             }
