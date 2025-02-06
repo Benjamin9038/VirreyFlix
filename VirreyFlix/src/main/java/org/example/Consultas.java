@@ -2,10 +2,7 @@ package org.example;
 
 import DAOS.DAOEpisodio;
 import DAOS.DAOSerie;
-import org.example.model.Episodio;
-import org.example.model.Perfil;
-import org.example.model.Serie;
-import org.example.model.Usuario;
+import org.example.model.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -77,10 +74,67 @@ public class Consultas {
 
                     }
                 }
+                    case 5 -> {
+                        System.out.println("Introduce el ID del usuario para ver los capítulos que ha visto:");
+                        long idUsuario = sc.nextLong();
 
-                case 5->{
 
-                }
+                        List<Perfil> perfiles = session.createQuery(
+                                        "FROM Perfil p WHERE p.usuario.id = :idUsuario", Perfil.class)
+                                .setParameter("idUsuario", idUsuario)
+                                .list();
+
+                        if (perfiles.isEmpty()) {
+                            System.out.println("Este usuario no tiene perfiles.");
+                        } else {
+                            System.out.println("Capítulos vistos por el usuario con ID " + idUsuario + ":");
+
+                            for (Perfil perfil : perfiles) {
+
+                                List<Historial> historiales = session.createQuery(
+                                                "SELECT h FROM Historial h " +
+                                                        "JOIN FETCH h.episodio e " +
+                                                        "JOIN FETCH e.serie s " +
+                                                        "WHERE h.perfil.id = :idPerfil", Historial.class)
+                                        .setParameter("idPerfil", perfil.getId())
+                                        .list();
+
+                                if (historiales.isEmpty()) {
+                                    System.out.println("No hay capítulos vistos por el perfil con ID " + perfil.getId());
+                                } else {
+                                    for (Historial h : historiales) {
+                                        Episodio episodio = h.getEpisodio();
+                                        Serie serie = episodio.getSerie();
+                                        System.out.println("Serie: " + serie.getTitulo() +
+                                                ", Título del capítulo: " + episodio.getTitulo() +
+                                                ", Duración: " + episodio.getDuracion() + " minutos" +
+                                                ", Fecha de reproducción: " + h.getFecha_reproduccion());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    case 8->{
+                        List<Object[]> seriesMasVistas = session.createQuery(
+                                        "SELECT s.titulo, COUNT(h.id) " +
+                                                "FROM Historial h " +
+                                                "JOIN h.episodio e " +
+                                                "JOIN e.serie s " +
+                                                "GROUP BY s.id " +
+                                                "ORDER BY COUNT(h.id) DESC",
+                                        Object[].class)
+                                .setMaxResults(5) // Limitar a las 5 más vistas
+                                .list();
+
+                        System.out.println("Mostrando las 5 series más vistas:");
+                        for (Object[] result : seriesMasVistas) {
+                            String tituloSerie = (String) result[0];
+                            Long reproducciones = (Long) result[1];
+                            System.out.println("Serie: " + tituloSerie + " - Reproducciones: " + reproducciones);
+                        }
+
+
+                    }
             }
 
         }while(opcion!=0);
