@@ -1,6 +1,6 @@
 package org.example.model;
-import jakarta.persistence.*;
 
+import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +11,7 @@ public class Genero {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(length = 100)
+    @Column(length = 100, unique = true, nullable = false)
     private String nombre;
 
     @ManyToMany(mappedBy = "generos")

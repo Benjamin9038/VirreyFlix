@@ -31,5 +31,6 @@
         <mapping class="org.example.model.Serie" />
         <mapping class="org.example.model.Episodio" />
         <mapping class="org.example.model.Historial" />
+        <mapping class="org.example.model.Genero" />
     </session-factory>
 </hibernate-configuration>

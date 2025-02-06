@@ -1,6 +1,8 @@
 package org.example;
 
+import DAOS.DAOEpisodio;
 import DAOS.DAOSerie;
+import org.example.model.Episodio;
 import org.example.model.Perfil;
 import org.example.model.Serie;
 import org.example.model.Usuario;
@@ -16,6 +18,7 @@ public class Consultas {
         Transaction tx = null;
         Scanner sc=new Scanner(System.in);
         DAOSerie daoSerie = new DAOSerie();
+        DAOEpisodio daoEpisodio = new DAOEpisodio();
 
         int opcion=-1;
         do {
@@ -55,6 +58,28 @@ public class Consultas {
                             System.out.println(serie);
                         }
                     }else System.out.println("No hay series de esa edad");
+                }
+                case 4->{
+
+                        System.out.println("Introduce el ID de la serie para ver sus capítulos:");
+                        int idSerie = sc.nextInt();
+
+                        List<Episodio> episodios = session.createQuery(
+                                        "FROM Episodio e WHERE e.serie.id = :idSerie", Episodio.class)
+                                .setParameter("idSerie", idSerie)
+                                .list();
+
+                        if (episodios.isEmpty()) {
+                            System.out.println("No hay episodios registrados para esta serie o el ID es incorrecto.");
+                        } else {
+                            System.out.println("Capítulos de la serie con ID " + idSerie + ":");
+                            episodios.forEach(System.out::println);
+
+                    }
+                }
+
+                case 5->{
+
                 }
             }
 

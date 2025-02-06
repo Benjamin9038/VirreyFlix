@@ -39,8 +39,6 @@ public class DAOSerie {
             System.out.print("Introduce el nuevo título: ");
             serie.setTitulo(scanner.nextLine());
 
-            System.out.print("Introduce el nuevo género: ");
-            serie.setGenero(scanner.nextLine());
 
             System.out.print("Introduce la nueva calificación de edad: ");
             serie.setCalificacion_edad(scanner.nextInt());
@@ -68,7 +66,7 @@ public class DAOSerie {
             int calificacionEdad = scanner.nextInt();
             scanner.nextLine();
 
-            Serie serie = new Serie(titulo, genero, calificacionEdad);
+            Serie serie = new Serie(titulo, calificacionEdad);
             session.persist(serie);
             tx.commit();
             System.out.println("Serie creada correctamente.");

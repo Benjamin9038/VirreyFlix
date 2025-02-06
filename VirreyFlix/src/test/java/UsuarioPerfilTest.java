@@ -30,7 +30,7 @@ public class UsuarioPerfilTest {
 
         Transaction tx = session.beginTransaction();
 
-        Serie serie = new Serie("Los simpsons","Comedia",12);
+        Serie serie = new Serie("Los simpsons",12);
 
         Episodio ep1 = new Episodio("Navidad",20);
         Episodio ep2 = new Episodio("Verano",10);

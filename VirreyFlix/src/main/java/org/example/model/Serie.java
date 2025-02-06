@@ -14,20 +14,24 @@ public class Serie {
     @Column(length = 200)
     private String titulo;
 
-    @Column(length = 100)
-    private String genero;
-
     private int calificacion_edad;
 
     @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    Set<Episodio> episodios = new HashSet<>();
+    private Set<Episodio> episodios = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "serie_genero",
+            joinColumns = @JoinColumn(name = "serie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genero_id")
+    )
+    private Set<Genero> generos = new HashSet<>();
 
     public Serie() {
     }
 
-    public Serie(String titulo, String genero, int calificacion_edad) {
+    public Serie(String titulo, int calificacion_edad) {
         this.titulo = titulo;
-        this.genero = genero;
         this.calificacion_edad = calificacion_edad;
     }
 
@@ -47,14 +51,6 @@ public class Serie {
         this.titulo = titulo;
     }
 
-    public String getGenero() {
-        return genero;
-    }
-
-    public void setGenero(String genero) {
-        this.genero = genero;
-    }
-
     public int getCalificacion_edad() {
         return calificacion_edad;
     }
@@ -67,9 +63,16 @@ public class Serie {
         return episodios;
     }
 
-
     public void setEpisodios(Set<Episodio> episodios) {
         this.episodios = episodios;
+    }
+
+    public Set<Genero> getGeneros() {
+        return generos;
+    }
+
+    public void setGeneros(Set<Genero> generos) {
+        this.generos = generos;
     }
 
     @Override
@@ -77,7 +80,6 @@ public class Serie {
         return "Serie{" +
                 "id=" + id +
                 ", titulo='" + titulo + '\'' +
-                ", genero='" + genero + '\'' +
                 ", calificacion_edad=" + calificacion_edad +
                 '}';
     }
