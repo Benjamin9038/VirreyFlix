@@ -6,6 +6,7 @@ import org.example.model.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
@@ -115,7 +116,52 @@ public class Consultas {
                         }
                     }
                     case 6 -> {
+                            System.out.print("Ingrese el ID del perfil: ");
+                            long perfilId = sc.nextInt();
+                            System.out.print("Ingrese el ID de la serie: ");
+                            Long serieId = sc.nextLong();
+                            LocalDateTime fechaHoy = LocalDateTime.now();
 
+
+                                List<Episodio> episodios = session.createQuery(
+                                                "SELECT e FROM Episodio e WHERE e.serie.id = :serieId", Episodio.class)
+                                        .setParameter("serieId", serieId)
+                                        .getResultList();
+
+
+                                Perfil perfil = session.get(Perfil.class, perfilId);
+                                if (perfil == null) {
+                                    System.out.println("Perfil no encontrado");
+                                    tx.rollback();//Te hecha haci atras si hay algun error
+                                    session.close();
+                                    break;
+                                }
+
+                                for (Episodio episodio : episodios) {
+
+                                    Historial historial = session.createQuery(
+                                                    "SELECT h FROM Historial h WHERE h.perfil.id = :perfilId AND h.episodio.id = :episodioId",
+                                                    Historial.class)
+                                            .setParameter("perfilId", perfilId)
+                                            .setParameter("episodioId", episodio.getId())
+                                            .uniqueResult();
+
+                                    if (historial != null) {
+                                        // Si ya existe, actualizar la fecha
+                                        historial.setFecha_reproduccion(fechaHoy);
+                                        session.update(historial);
+                                    } else {
+                                        // Si no existe, insertar uno nuevo
+                                        Historial nuevoHistorial = new Historial();
+                                        nuevoHistorial.setPerfil(perfil);
+                                        nuevoHistorial.setEpisodio(episodio);
+                                        nuevoHistorial.setFecha_reproduccion(fechaHoy);
+                                        session.persist(nuevoHistorial);
+                                    }
+                                }
+                                tx = session.beginTransaction();
+                                tx.commit();
+                                System.out.println("Historial actualizado con la serie.");
                     }
                 case 7 -> {
                     sc.nextLine();

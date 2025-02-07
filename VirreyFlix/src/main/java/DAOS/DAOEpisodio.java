@@ -2,6 +2,7 @@ package DAOS;
 
 import org.example.HibernateUtil;
 import org.example.model.Episodio;
+import org.example.model.Serie;
 import org.example.model.Usuario;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -22,6 +23,20 @@ public class DAOEpisodio {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction tx = session.beginTransaction();
 
+
+            System.out.print("Introduce el ID de la serie a la que quieres asociar el episodio: ");
+            int serieId = sc.nextInt();
+            sc.nextLine(); // Limpiar buffer
+
+
+            Serie serie = session.get(Serie.class, serieId);
+
+            if (serie == null) {
+                System.out.println("No se encontró la serie con ID: " + serieId);
+                return;
+            }
+
+
             String titulo;
             do {
                 System.out.print("Introduce el título del episodio que quieres insertar: ");
@@ -35,29 +50,29 @@ public class DAOEpisodio {
             Integer duracion = null;
             do {
                 System.out.print("Introduce la duración en minutos: ");
-                if (sc.hasNextInt()) {
+                if (duracion>0) {
                     duracion = sc.nextInt();
-                    sc.nextLine();
-                    if (duracion <= 0) {
-                        System.out.println(" La duración debe ser mayor que 0.");
-                        duracion = null;
-                    }
+                    sc.nextLine(); // Limpiar buffer
                 } else {
-                    System.out.println(" Debes introducir un número válido.");
+                    System.out.println("Debes introducir un número válido.");
                     sc.nextLine(); // Limpiar buffer
                 }
             } while (duracion == null);
 
-            // Crear y persistir el episodio
-            Episodio episodio = new Episodio(titulo, duracion);
-            session.persist(episodio);
-            tx.commit();
 
-            System.out.println(" Episodio creado correctamente: " + episodio);
+            Episodio episodio = new Episodio(titulo, duracion);
+            episodio.setSerie(serie);
+
+
+            session.persist(episodio);
+
+            tx.commit();
+            System.out.println("Episodio creado correctamente y asociado a la serie '" + serie.getTitulo() + "': " + episodio);
         } catch (Exception e) {
-            System.out.println(" Error al crear episodio: " + e.getMessage());
+            System.out.println("Error al crear episodio: " + e.getMessage());
         }
     }
+
 
     public void listarEpisodios(Integer id) {
         Transaction tx = null;
@@ -109,18 +124,18 @@ public class DAOEpisodio {
             if (episodio == null) {
                 System.out.println(" No se encontró un episodio con el ID: " + id);
             } else {
-                // Solicitar nuevos valores para los campos del episodio
+
                 System.out.println("Introduce el nuevo título del episodio:");
                 String nuevoTitulo = sc.nextLine();
 
                 System.out.println("Introduce la nueva duración en minutos:");
                 int nuevaDuracion = sc.nextInt();
 
-                // Actualizar los valores del episodio
+
                 episodio.setTitulo(nuevoTitulo);
                 episodio.setDuracion(nuevaDuracion);
 
-                // Guardar los cambios
+
                 session.update(episodio);
 
                 tx.commit();
@@ -138,13 +153,13 @@ public class DAOEpisodio {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
 
-            // Buscar el episodio por ID
+
             Episodio episodio = session.get(Episodio.class, id);
 
             if (episodio == null) {
                 System.out.println(" No se encontró un episodio con el ID: " + id);
             } else {
-                // Eliminar el episodio
+
                 session.delete(episodio);
 
                 tx.commit();

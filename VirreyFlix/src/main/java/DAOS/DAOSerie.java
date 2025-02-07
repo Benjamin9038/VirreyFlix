@@ -64,7 +64,7 @@ public class DAOSerie {
             int calificacionEdad = scanner.nextInt();
             scanner.nextLine();
 
-            System.out.print("Introduce el género (ej. Comedia, Drama, Acción): ");
+            System.out.print("Introduce el género (Comedia, Drama, Acción, Ciencia Ficción): ");
             String nombreGenero = scanner.nextLine();
 
 
