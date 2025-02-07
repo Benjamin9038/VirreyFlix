@@ -33,7 +33,7 @@ public class Consultas {
 
             switch (opcion){
                 case 1->{
-                    List<Usuario> lista_Usuario=session.createQuery("SELECT usuario FROM Usuario usuario", Usuario.class).list();
+                    List<Usuario> lista_Usuario=session.createQuery("FROM Usuario usuario", Usuario.class).list();
                     for (Usuario usuario : lista_Usuario) {
                         System.out.println(usuario.toString());
                         List<Perfil>lista_perfiles=session.createQuery("FROM Perfil perfil WHERE perfil.usuario=:usuario", Perfil.class).setParameter("usuario", usuario).list();

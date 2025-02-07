@@ -19,7 +19,7 @@ public class Perfil {
     @OneToOne(cascade = CascadeType.ALL)
     Usuario usuario;
 
-    @OneToMany(mappedBy = "perfil",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "perfil",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     Set<Historial> historial=new HashSet<>();
 
     public Perfil() {

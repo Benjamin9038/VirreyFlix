@@ -7,7 +7,6 @@ import org.example.model.Episodio;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
@@ -19,33 +18,42 @@ public class DAOHistorial {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction tx = session.beginTransaction();
 
+
+            Scanner scanner = new Scanner(System.in);
             System.out.print("Introduce el ID del perfil: ");
-            long perfilId = sc.nextLong();
-            sc.nextLine();
+            long perfilId = scanner.nextLong();
+
+
             Perfil perfil = session.get(Perfil.class, perfilId);
-
-            System.out.print("Introduce el ID del episodio: ");
-            long episodioId = sc.nextLong();
-            sc.nextLine();
-            Episodio episodio = session.get(Episodio.class, episodioId);
-
-            if (perfil == null || episodio == null) {
-                System.out.println("Perfil o episodio no encontrado.");
-                return;
+            if (perfil == null) {
+                System.out.println("El perfil con ID " + perfilId + " no existe.");
+                return; // Salir si no se encuentra el perfil
             }
 
-            Historial historial = new Historial(LocalDateTime.now());
+
+            System.out.print("Introduce el ID del episodio: ");
+            long episodioId = scanner.nextLong();
+            Episodio episodio = session.get(Episodio.class, episodioId);
+            if (episodio == null) {
+                System.out.println("El episodio con ID " + episodioId + " no existe.");
+                return; // Salir si no se encuentra el episodio
+            }
+
+            // Crear el objeto Historial y asociar el perfil y el episodio
+            Historial historial = new Historial();
+            historial.setFecha_reproduccion(LocalDateTime.now());
             historial.setPerfil(perfil);
             historial.setEpisodio(episodio);
 
-            session.persist(historial);
+            // Insertar el historial en la base de datos
+            session.save(historial);
             tx.commit();
-
-            System.out.println("Historial creado correctamente: " + historial);
+            System.out.println("Historial creado correctamente.");
         } catch (Exception e) {
             System.out.println("Error al crear historial: " + e.getMessage());
         }
     }
+
 
     public void listarHistorial(long perfilId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -108,20 +116,27 @@ public class DAOHistorial {
         }
     }
 
-    public void eliminarHistorial(long id) {
+    public void eliminarHistorial(long historialId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction tx = session.beginTransaction();
 
-            Historial historial = session.get(Historial.class, id);
-            if (historial == null) {
-                System.out.println("No se encontró un historial con el ID: " + id);
-            } else {
+
+            Historial historial = session.get(Historial.class, historialId);
+            if (historial != null) {
+                // Desasociar las entidades relacionadas antes de eliminar
+                historial.setPerfil(null); // Desasociar perfil
+                historial.setEpisodio(null); // Desasociar episodio
+
+
                 session.delete(historial);
                 tx.commit();
-                System.out.println("Historial eliminado correctamente: " + historial);
+                System.out.println("Historial eliminado correctamente.");
+            } else {
+                System.out.println("Historial no encontrado.");
             }
         } catch (Exception e) {
             System.out.println("Error al eliminar historial: " + e.getMessage());
         }
     }
+
 }

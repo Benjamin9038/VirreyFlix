@@ -50,7 +50,7 @@ public class DAOEpisodio {
             Integer duracion = null;
             do {
                 System.out.print("Introduce la duración en minutos: ");
-                if (duracion>0) {
+                if (duracion==null) {
                     duracion = sc.nextInt();
                     sc.nextLine(); // Limpiar buffer
                 } else {
