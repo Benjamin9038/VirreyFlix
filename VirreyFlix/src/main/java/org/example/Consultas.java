@@ -114,8 +114,39 @@ public class Consultas {
                             }
                         }
                     }
-                    case 8->{
-                        List<Object[]> seriesMasVistas = session.createQuery(
+                    case 6 -> {
+
+                    }
+                case 7 -> {
+                    sc.nextLine();
+                    System.out.println("Introduce un género para ver las series y la duración media de sus capítulos:");
+                    String generoUsuario = sc.nextLine().trim(); // Eliminar espacios en blanco extras
+
+                    List<Object[]> seriesPorGenero = session.createQuery(
+                                    "SELECT s.titulo, AVG(e.duracion) " +
+                                            "FROM Serie s " +
+                                            "JOIN s.generos g " +
+                                            "JOIN s.episodios e " +
+                                            "WHERE LOWER(TRIM(g.nombre)) = LOWER(:genero) " + // Ignorar mayúsculas y espacios
+                                            "GROUP BY s.id",
+                                    Object[].class)
+                            .setParameter("genero", generoUsuario) // Pasar el nombre del género en minúsculas
+                            .list();
+
+                    if (seriesPorGenero.isEmpty()) {
+                        System.out.println("No hay series registradas para el género: " + generoUsuario);
+                    } else {
+                        System.out.println("Series del género '" + generoUsuario + "' con duración media de capítulos:");
+                        for (Object[] result : seriesPorGenero) {
+                            String tituloSerie = (String) result[0];
+                            Double duracionMedia = (Double) result[1];
+                            System.out.println("Serie: " + tituloSerie + " - Duración media: " + duracionMedia + " min");
+                        }
+                    }
+
+                }
+                case 8->{
+                        List<Object[]> seriesmasVistas = session.createQuery(
                                         "SELECT s.titulo, COUNT(h.id) " +
                                                 "FROM Historial h " +
                                                 "JOIN h.episodio e " +
@@ -127,7 +158,7 @@ public class Consultas {
                                 .list();
 
                         System.out.println("Mostrando las 5 series más vistas:");
-                        for (Object[] result : seriesMasVistas) {
+                        for (Object[] result : seriesmasVistas) {
                             String tituloSerie = (String) result[0];
                             Long reproducciones = (Long) result[1];
                             System.out.println("Serie: " + tituloSerie + " - Reproducciones: " + reproducciones);

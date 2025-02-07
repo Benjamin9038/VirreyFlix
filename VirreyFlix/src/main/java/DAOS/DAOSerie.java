@@ -1,6 +1,7 @@
 package DAOS;
 
 import org.example.HibernateUtil;
+import org.example.model.Genero;
 import org.example.model.Serie;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -59,21 +60,35 @@ public class DAOSerie {
             System.out.print("Introduce el título de la serie: ");
             String titulo = scanner.nextLine();
 
-            System.out.print("Introduce el género: ");
-            String genero = scanner.nextLine();
-
             System.out.print("Introduce la calificación de edad: ");
             int calificacionEdad = scanner.nextInt();
             scanner.nextLine();
 
+            System.out.print("Introduce el género (ej. Comedia, Drama, Acción): ");
+            String nombreGenero = scanner.nextLine();
+
+
+            Query<Genero> query = session.createQuery("FROM Genero WHERE nombre = :nombre", Genero.class);
+            query.setParameter("nombre", nombreGenero);
+            Genero genero = query.uniqueResult();
+
+            if (genero == null) {
+                System.out.println("Género no encontrado. Primero debes crearlo.");
+                return;
+            }
+
+
             Serie serie = new Serie(titulo, calificacionEdad);
+            serie.getGeneros().add(genero);
             session.persist(serie);
+
             tx.commit();
-            System.out.println("Serie creada correctamente.");
+            System.out.println("Serie creada correctamente y asociada al género.");
         } catch (Exception e) {
             System.out.println("Error al crear serie: " + e.getMessage());
         }
     }
+
 
     public void eliminarSerie(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
